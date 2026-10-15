@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,9 +13,19 @@ public class GameManager : MonoBehaviour
     private Vector2 activeZ;
     public float risingspeed;
 
+    public int scorestep = 10;
+
     private int score;
     private int lives;
     private bool over;
+
+    public Image life_1;
+    public Image life_2;
+    public Image life_3;
+    public Image life_4;
+    public Image life_5;
+    public Text scoreText;
+    public Button gameover;
 
 
 
@@ -23,9 +34,10 @@ public class GameManager : MonoBehaviour
     {
         over = false;
         score = 0;
+        scoreText.text = score.ToString();
         lives = 5;
         //Debug.Log("GameManager has started."); // debug is console print for unity engine
-        pickzombie();
+        Pickzombie();
     }
 
     // Update is called once per frame
@@ -33,7 +45,89 @@ public class GameManager : MonoBehaviour
     {
         if (!over)
         {
+            Movezombie();
+            //Debug.Log("GameManager is updating."); // debug is console print for unity engine
+        }
+        else
+        {
+            Resetgame();
+        }
+    }
 
+
+
+
+
+
+    private void UpdateLivesUI()
+    {
+        // Update the life images based on the current number of lives
+
+        if (lives == 5)
+        {
+            life_1.enabled = true;
+            life_2.enabled = true;
+            life_3.enabled = true;
+            life_4.enabled = true;
+            life_5.enabled = true;
+            //life_5.enabled = false;
+        }
+        else if (lives == 4)
+        {
+            life_5.enabled = false;
+            //life_1.gameObject.SetActive(false);
+            //life_4.enabled = false;
+        }
+        else if (lives == 3)
+        {
+            life_4.enabled = false;
+            //life_2.gameObject.SetActive(false);
+            //life_3.enabled = false;
+        }
+        else if (lives == 2)
+        {
+            life_3.enabled = false;
+            //life_3.gameObject.SetActive(false);
+            //life_2.enabled = false;
+        }
+        else if (lives == 1)
+        {
+            life_2.enabled = false;
+            //life_4.gameObject.SetActive(false);
+            //life_1.enabled = false;
+        }
+        else if (lives == 0)
+        {
+            life_1.enabled = false;
+            Gameoverf();
+        }
+
+    }
+
+    private void Gameoverf()
+    {
+        over = true;
+        gameover.gameObject.SetActive(true);
+    }
+
+
+    private void Resetgame()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            over = false;
+            score = 0;
+            scoreText.text = score.ToString();
+            lives = 5;
+            UpdateLivesUI();
+            Pickzombie();
+            gameover.gameObject.SetActive(false);
+        }
+
+    }
+
+    private void Movezombie()
+    {
         if (isrising)
         {
             // Handle rising logic
@@ -61,12 +155,9 @@ public class GameManager : MonoBehaviour
                 isfalling = false;
                 isrising = false;
                 lives--;
-                if (lives <= 0)
-                {
-                    Debug.Log("Game Over! Final Score: " + score);
-                    over = true;
-                    // You can add additional game over logic here, such as restarting the game or showing a game over screen.
-                }
+                Debug.Log("lives = " + lives);
+                UpdateLivesUI(); // Update the lives UI
+
 
             }
             else
@@ -78,13 +169,12 @@ public class GameManager : MonoBehaviour
         {
             // bump to start position
             zombies[activezombieIndex].transform.position = activeZ;
-            pickzombie();
+            Pickzombie();
 
         }
     }
-}
 
-    private void pickzombie()
+    private void Pickzombie()
     {
         isrising = true;
         isfalling = false;
@@ -93,12 +183,24 @@ public class GameManager : MonoBehaviour
         activeZ = zombies[activezombieIndex].transform.position;
     }
 
-    public void zombiekilled()
+    public void Zombiekilled()
     {
         score++;
-
+        scoreText.text = score.ToString();
+        Increase_speed();
         zombies[activezombieIndex].transform.position = activeZ; // reset the position of the zombie to its original position
-        pickzombie(); // pick a new zombie to rise
+        Pickzombie(); // pick a new zombie to rise
         Debug.Log("score = " + score);
     }
+
+    private void Increase_speed()
+    {
+        if(score >= scorestep)
+        {
+            risingspeed++;
+            scorestep += 10;
+        }
+    }
 }
+
+

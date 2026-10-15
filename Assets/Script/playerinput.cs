@@ -38,7 +38,7 @@ public class playerinput : MonoBehaviour
                 if (frontCollider.tag == "zombie")
                 {
                     //Debug.Log("Zombie hit!");   // debug is console print for unity engine
-                    gameObject.GetComponent<GameManager>().zombiekilled(); // call the zombiekilled function in GameManager script
+                    gameObject.GetComponent<GameManager>().Zombiekilled(); // call the zombiekilled function in GameManager script
                 }
             }
         }
